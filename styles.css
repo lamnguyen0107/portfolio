@@ -353,13 +353,19 @@ h2 {
 .project-link-icon svg {
   width: 19px;
   height: 19px;
+  transform: rotate(45deg);
+  transition: transform 0.3s cubic-bezier(0.2, 0.72, 0.2, 1);
 }
 
 .project-link-icon:hover,
 .project-link-icon:focus-visible {
-  transform: translateY(-1px);
   border-color: #9fb39f;
   color: var(--cta);
+}
+
+.project-card:hover .project-link-icon svg,
+.project-card:focus-within .project-link-icon svg {
+  transform: rotate(0deg);
 }
 
 .project-meta {
