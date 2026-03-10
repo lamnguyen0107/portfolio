@@ -399,14 +399,14 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    order: 2;
-    /* Content goes below 3D element */
+    order: 1;
+    /* Content (with CTAs) goes on top */
   }
 
   .hero-3d-wrapper {
-    order: 1;
-    /* 3D element goes above Content */
-    margin-bottom: 2rem;
+    order: 2;
+    /* 3D element goes below Content */
+    margin-top: 2rem;
     position: relative;
   }
 
