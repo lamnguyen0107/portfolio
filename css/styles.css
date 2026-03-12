@@ -314,7 +314,7 @@ h2 {
 }
 
 @media (min-width: 901px) {
-  .works-grid-staggered .project-card:nth-child(even) {
+  .works-grid-staggered .card-isometric-wrap:nth-child(even) {
     transform: translateY(80px); /* Creates the premium staggered look */
   }
 }
