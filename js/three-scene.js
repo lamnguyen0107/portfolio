@@ -23,17 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const planeGeometry = new THREE.PlaneGeometry(120, 120, 100, 100);
         const posAttribute = planeGeometry.attributes.position;
         const initialZ = new Float32Array(posAttribute.count);
-        
-        for(let i = 0; i < posAttribute.count; i++) {
+
+        for (let i = 0; i < posAttribute.count; i++) {
             // Give an organic initial noise
-            initialZ[i] = (Math.random() - 0.5) * 1.5; 
+            initialZ[i] = (Math.random() - 0.5) * 1.5;
         }
 
         // We will make it a premium glossy dark floor
         const planeMaterial = new THREE.MeshStandardMaterial({
             color: 0x0f1115,
             emissive: 0x07080a,
-            wireframe: false, 
+            wireframe: false,
             roughness: 0.2, // Low roughness = glossy
             metalness: 0.9, // High metalness = strong reflection
             side: THREE.FrontSide
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
         const wireMesh = new THREE.Mesh(planeGeometry, wireMaterial);
         const pointsMesh = new THREE.Points(planeGeometry, pointsMaterial);
-        
+
         // Push the overlays very slightly up to avoid z-fighting
         wireMesh.position.z = 0.02;
         pointsMesh.position.z = 0.04;
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         surfaceGroup.add(planeMesh);
         surfaceGroup.add(wireMesh);
         surfaceGroup.add(pointsMesh);
-        
+
         surfaceGroup.rotation.x = -Math.PI / 2;
         waveGroup.add(surfaceGroup);
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dustGeometry = new THREE.BufferGeometry();
         const dustCount = 400;
         const dustPos = new Float32Array(dustCount * 3);
-        for(let i=0; i < dustCount * 3; i++) {
+        for (let i = 0; i < dustCount * 3; i++) {
             dustPos[i] = (Math.random() - 0.5) * 100;
         }
         dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
@@ -88,17 +88,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 2. Lighting ---
         scene.add(new THREE.AmbientLight(0xffffff, 0.2));
-        
+
         // Main highlight skimming the waves
         const p1 = new THREE.PointLight(0xff8c00, 2.5, 100);
         p1.position.set(20, 10, 10);
         scene.add(p1);
-        
+
         // Deep moss shadow fill
         const p2 = new THREE.PointLight(0x5d7a67, 4, 150);
         p2.position.set(-20, 15, -10);
         scene.add(p2);
-        
+
         // Dynamic mouse spotlight
         const cursorLight = new THREE.PointLight(0xffffff, 2, 60);
         scene.add(cursorLight);
@@ -108,18 +108,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.addEventListener("load", () => {
             if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-                ScrollTrigger.clearMatchMedia(); 
-                
+                ScrollTrigger.clearMatchMedia();
+
                 // Fly the camera intensely over the waves as user scrolls (Dive effect)
                 gsap.to(camera.position, {
                     y: 1.5, // dive low to the surface
                     z: -12, // fly forward deeply through the fog
                     ease: "power2.inOut",
-                    scrollTrigger: { 
-                        trigger: "body", 
-                        start: "top top", 
-                        end: "bottom bottom", 
-                        scrub: 2 
+                    scrollTrigger: {
+                        trigger: "body",
+                        start: "top top",
+                        end: "bottom bottom",
+                        scrub: 2
                     }
                 });
 
@@ -127,21 +127,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 gsap.to(waveGroup.rotation, {
                     x: Math.PI / 18,
                     ease: "none",
-                    scrollTrigger: { 
-                        trigger: "body", 
-                        start: "top top", 
-                        end: "bottom bottom", 
-                        scrub: 2 
+                    scrollTrigger: {
+                        trigger: "body",
+                        start: "top top",
+                        end: "bottom bottom",
+                        scrub: 2
                     }
                 });
             }
         });
 
         // --- 4. Constant Render Loop & Interaction ---
-        let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
         let targetX = 0, targetY = 0;
         let time = 0;
-        
+
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
@@ -152,20 +152,20 @@ document.addEventListener('DOMContentLoaded', () => {
             time += 0.003;
 
             // Animate waves constantly (complex Perlin-like noise math)
-            for(let i = 0; i < posAttribute.count; i++) {
+            for (let i = 0; i < posAttribute.count; i++) {
                 const x = planeGeometry.attributes.position.getX(i);
                 const y = planeGeometry.attributes.position.getY(i);
-                
+
                 // Overlay multiple sine waves for more chaotic, deep ocean feel
                 const wave1 = Math.sin(x * 0.1 + time) * Math.cos(y * 0.1 + time) * 2;
                 const wave2 = Math.sin(x * 0.15 - time * 1.5) * 1.5;
                 const wave3 = Math.cos(y * 0.05 + time * 0.8) * 1.5;
-                
+
                 const z = wave1 + wave2 + wave3 + initialZ[i];
                 posAttribute.setZ(i, z);
             }
             posAttribute.needsUpdate = true;
-            
+
             // Re-calc normals so physical lighting reflects dynamically off the waving geography
             planeGeometry.computeVertexNormals();
 
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Smooth mouse physics mapped to the 3D space loosely
             const screenRatioX = (mouseX / window.innerWidth) * 2 - 1;
             const screenRatioY = -(mouseY / window.innerHeight) * 2 + 1;
-            
+
             // Tie interactive light to mouse position floating over the plane
             cursorLight.position.x += 0.05 * (screenRatioX * 30 - cursorLight.position.x);
             cursorLight.position.y += 0.05 * (5 + (screenRatioY * 10) - cursorLight.position.y);

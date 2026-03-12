@@ -1,6 +1,6 @@
-﻿:root {
+:root {
   --bg: #0b0c10;
-  --surface: rgba(30, 31, 34, 0.6);
+  --surface: #16171a; /* Solid surface for stacking cards */
   --text: #ffffff;
   --muted: #9ba09d;
   --line: rgba(255, 255, 255, 0.1);
@@ -215,8 +215,8 @@ main,
 }
 
 .section {
-  padding: 12rem 0; /* Increased padding to make scrolling longer and more premium */
-  min-height: 85vh; /* Ensure sections take more vertical space */
+  padding: 7rem 0;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -299,29 +299,42 @@ h2 {
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* Cleaned out horizontal scroll wrappers */
 .section-head {
-  margin-bottom: 1.2rem;
+  margin-bottom: 2rem;
 }
 
-.works-grid {
+.works-grid-staggered {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
 }
 
 .project-card {
+  position: relative;
+  width: 100%;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--surface);
   box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.project-card:hover {
+  box-shadow: 0 32px 72px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .project-media {
   position: relative;
-  height: 280px;
+  aspect-ratio: 16/9; /* Exact 1920:1080 proportion */
+  height: auto;
   overflow: hidden;
-  background: #dce7de;
+  background: #111;
   background-size: cover;
   background-position: center;
 }
@@ -358,7 +371,7 @@ h2 {
 }
 
 .project-body {
-  padding: 1rem 1rem 1.2rem;
+  padding: 1rem 1.4rem 1.2rem;
 }
 
 .project-top {
@@ -374,14 +387,15 @@ h2 {
   flex-direction: column;
   justify-content: center;
   flex: 1;
-  min-height: 48px;
-  /* Match approximately the button block to give more centered proportion */
+  min-height: 40px; /* Match approximately the smaller button block */
 }
 
 .project-top h3 {
-  margin: 0 0 0.3rem 0;
-  /* Add margin-bottom directly to h3 */
-  line-height: 1.3;
+  margin: 0 0 0.4rem 0;
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .project-link-icon {
@@ -389,29 +403,36 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
-  border: 1px solid #d2ddcc;
-  color: var(--moss-700);
-  background: #f1f6ee;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
   text-decoration: none;
-  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.2, 0.72, 0.2, 1);
   align-self: flex-start;
-  /* Keeps the button from stretching or misaligning if text gets too tall */
 }
 
 .project-link-icon svg {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
   transform: rotate(45deg);
   transition: transform 0.3s cubic-bezier(0.2, 0.72, 0.2, 1);
 }
 
 .project-link-icon:hover,
 .project-link-icon:focus-visible {
-  border-color: var(--cta);
-  color: var(--cta);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.project-card:hover .project-link-icon {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
 }
 
 .project-card:hover .project-link-icon svg,
@@ -420,15 +441,11 @@ h2 {
 }
 
 .project-meta {
-  color: var(--muted);
+  color: var(--text);
+  opacity: 0.6;
   margin-top: 0;
-  font-size: 0.9rem;
-}
-
-.project-body ul {
-  margin: 0.8rem 0 1rem;
-  padding-left: 1.1rem;
-  color: #344338;
+  font-size: 0.95rem;
+  font-weight: 400;
 }
 
 .about-grid {
@@ -543,27 +560,17 @@ h2 {
 
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.2, 0.72, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.72, 0.2, 1);
   will-change: opacity, transform;
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
 }
 
-.figma-capture .reveal {
+/* Fallback for figma capture or no JS */
+.figma-capture .reveal,
+.no-js .reveal {
   opacity: 1 !important;
-  transform: none !important;
-}
-
-.figma-capture .bg-atmosphere,
-.figma-capture .ambient {
-  display: none !important;
-}
-
-.figma-capture .project-media img {
   transform: none !important;
 }
 
@@ -582,13 +589,12 @@ h2 {
 }
 
 @media (max-width: 900px) {
-  .project-media {
-    height: 240px;
+  .works-grid-staggered {
+    grid-template-columns: 1fr;
+    gap: 3rem;
   }
 
-  .works-grid {
-    grid-template-columns: 1fr;
-  }
+  /* Aspect ratio remains consistent via base class */
 
   .section {
     padding-top: 5.5rem;
@@ -614,15 +620,19 @@ h2 {
     width: 100%;
     margin-top: 0.35rem;
     padding: 0.7rem;
-    border: 1px solid #d5decf;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    background: rgba(251, 252, 248, 0.96);
+    background: rgba(15, 16, 18, 0.95);
     backdrop-filter: blur(8px);
     gap: 0.65rem;
   }
 
   .site-header.menu-open .nav-drawer {
     display: grid;
+  }
+
+  .site-header.menu-open {
+    background: rgba(15, 16, 18, 0.98);
   }
 
   .site-header.menu-open .nav-toggle span:nth-child(1) {
@@ -661,8 +671,14 @@ h2 {
 }
 
 @media (max-width: 420px) {
-  .project-media {
-    height: 210px;
+  /* Aspect ratio remains consistent via base class */
+
+  .project-top h3 {
+    font-size: 1.35rem;
+  }
+
+  .project-meta {
+    font-size: 0.85rem;
   }
 
   .section {
@@ -681,8 +697,17 @@ h2 {
   width: 100%;
 }
 
-body.figma-capture {`n  min-width: 1920px;`n}
+body.figma-capture {
+  min-width: 1920px;
+}
 
-body.figma-capture .capture-frame {`n  width: 1920px;`n  margin: 0 auto;`n}
+body.figma-capture .capture-frame {
+  width: 1920px;
+  margin: 0 auto;
+}
 
-body.figma-capture .site-header,`nbody.figma-capture main,`nbody.figma-capture .site-footer {`n  width: min(1680px, calc(100% - 240px));`n}
+body.figma-capture .site-header,
+body.figma-capture main,
+body.figma-capture .site-footer {
+  width: min(1680px, calc(100% - 240px));
+}

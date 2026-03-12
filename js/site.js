@@ -59,25 +59,48 @@ if (yearEl) {
   yearEl.textContent = new Date().getFullYear();
 }
 
-const revealItems = document.querySelectorAll(".reveal");
+// -------------------------------------------------------------
+// Premium Reveal Animations (GSAP)
+// -------------------------------------------------------------
+if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+  const revealItems = document.querySelectorAll(".reveal");
+  
+  revealItems.forEach((item) => {
+    // Check if item is already high in the viewport (like Hero)
+    const rect = item.getBoundingClientRect();
+    const isAboveFold = rect.top < window.innerHeight * 0.5;
 
-const revealObserver = new IntersectionObserver(
-  (entries) => {
+    gsap.fromTo(item, 
+      { 
+        opacity: isAboveFold ? 1 : 0, 
+        y: isAboveFold ? 0 : 40 
+      }, 
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: "expo.out",
+        scrollTrigger: {
+          trigger: item,
+          start: "top 95%",
+          end: "bottom 5%", // Added explicit end point for scrolling up
+          toggleActions: "play reverse play reverse",
+        }
+      }
+    );
+  });
+} else {
+  // Simple fallback if GSAP not available
+  const revealItems = document.querySelectorAll(".reveal");
+  const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting || isFigmaCapture) {
+      if (entry.isIntersecting) {
         entry.target.classList.add("is-visible");
-      } else {
-        entry.target.classList.remove("is-visible");
       }
     });
-  },
-  {
-    threshold: 0.14,
-    rootMargin: "0px 0px -40px 0px",
-  }
-);
-
-revealItems.forEach((item) => revealObserver.observe(item));
+  }, { threshold: 0.1 });
+  revealItems.forEach((item) => revealObserver.observe(item));
+}
 
 const mediaItems = Array.from(document.querySelectorAll(".project-media img"));
 let ticking = false;
@@ -161,4 +184,6 @@ window.addEventListener("load", () => {
       if (hero) hero.classList.add("active");
     }, 1000);
   }
+
+  // Stacking logic removed
 });
