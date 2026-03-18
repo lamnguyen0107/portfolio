@@ -123,6 +123,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
+                // Background container blur and opacity animation (Faded/Blurred at top, Clear at bottom)
+                gsap.fromTo(container, 
+                    { 
+                        opacity: 0.3,
+                        filter: "blur(20px)" 
+                    },
+                    {
+                        opacity: 1,
+                        filter: "blur(0px)",
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: "body",
+                            start: "top top",
+                            end: "bottom bottom",
+                            scrub: true
+                        }
+                    }
+                );
+
                 // Tilt the whole landscape slightly based on scroll
                 gsap.to(waveGroup.rotation, {
                     x: Math.PI / 18,

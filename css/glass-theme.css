@@ -334,31 +334,62 @@ p {
 .hero-layout {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 2rem;
   width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.hero.section {
+  overflow: visible;
+  position: relative;
+  min-height: 90vh;
 }
 
 .hero-content {
   flex: 1;
   width: 100%;
+  max-width: 55%;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
 }
 
-.hero-3d-wrapper {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Re-enable pointer events on interactive elements within hero-content */
+.hero-content .btn-glass,
+.hero-content a,
+.hero-content button {
+  pointer-events: auto;
+}
+
+/* Spline fullscreen overlay covering the entire hero */
+.hero-spline-fullscreen {
+  position: absolute;
+  inset: 0;
   z-index: 1;
+  overflow: visible;
+}
+
+#spline-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+  display: block;
 }
 
 @media (min-width: 900px) {
   .hero-layout {
     flex-direction: row;
-    justify-content: space-between;
+    align-items: center;
     text-align: left;
+    min-height: 80vh;
+  }
+
+  .hero-content {
+    max-width: 55%;
   }
 
   /* Center Navbar Links */
@@ -414,30 +445,12 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    order: 2;
-    /* Content goes below 3D element */
+    max-width: 100%;
+    padding-top: 50vh; /* Push text below the Spline scene on mobile */
   }
 
-  .hero-3d-wrapper {
-    order: 1;
-    /* 3D element goes above Content */
-    margin-bottom: 2rem;
-    position: relative;
-  }
-
-  .hero-3d-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, var(--orange-glow) 0%, rgba(93, 122, 103, 0.5) 50%, transparent 100%);
-    filter: blur(50px);
-    border-radius: 50%;
-    z-index: 0;
-    pointer-events: none;
+  .hero.section {
+    min-height: auto;
   }
 
   .hero-actions {
