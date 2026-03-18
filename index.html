@@ -77,7 +77,13 @@
         <div class="bloom-gradient bloom-orange"></div>
         <div class="bloom-gradient bloom-moss" style="right: 5vw; bottom: 0;"></div>
 
-        <div class="hero-layout">
+        <!-- Spline 3D: absolute positioned, covers full hero for interaction -->
+        <div class="hero-spline-bg">
+          <canvas id="spline-canvas"></canvas>
+        </div>
+
+        <!-- Text overlay: floats on top, pointer-events only on buttons -->
+        <div class="hero-overlay">
           <div class="hero-content">
             <p class="eyebrow">UI/UX Designer | Ho Chi Minh City, Vietnam</p>
             <h1 style="margin-bottom: 2vh; font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1.1;">Designing <span class="text-gradient" style="background: linear-gradient(135deg, #ff8c00, #ffb347); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">digital products</span><br>that make things feel simple.</h1>
@@ -114,10 +120,6 @@
                 </div>
               </a>
             </div>
-          </div>
-
-          <div class="hero-spline-container">
-            <canvas id="spline-canvas"></canvas>
           </div>
         </div>
       </section>

@@ -76,6 +76,6 @@ class SplineHandler {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('spline-canvas')) {
-        new SplineHandler('spline-canvas', 'https://prod.spline.design/qroY2UrUsOH8jXVM/scene.splinecode');
+        new SplineHandler('spline-canvas', 'https://prod.spline.design/PfMVBprKBdueuM0a/scene.splinecode');
     }
 });

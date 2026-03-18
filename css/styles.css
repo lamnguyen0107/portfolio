@@ -53,6 +53,7 @@ body {
   color: var(--text);
   background: var(--bg);
   line-height: 1.55;
+  overflow-x: hidden;
 }
 
 /* Replaced ambient layers with a unified dark background approach */
