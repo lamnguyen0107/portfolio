@@ -361,8 +361,8 @@ p {
 #works {
   position: relative;
   z-index: 3;
-  margin-top: -5vh; /* Giảm mức độ trượt đè để cách ra thêm 1 chút */
-  padding-top: 5vh; /* Thêm khoảng trống padding */
+  margin-top: 10vh; /* Pushed down by 15% (from -5vh to 10vh) to avoid viewport overlap */
+  padding-top: 5vh;
 }
 
 #spline-canvas {
