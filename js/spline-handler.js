@@ -27,11 +27,59 @@ class SplineHandler {
             // Hide Spline watermark
             this.hideWatermark();
             
+            // Adjust camera & scale for Desktop to make object feel further away
+            this.adjustCameraForDesktop();
+            
+            // Global scale reduction for ALL devices (10% smaller as requested)
+            const allObjects = this.app.getAllObjects();
+            if (allObjects && allObjects.length > 0) {
+                allObjects.forEach(obj => {
+                    if (obj.name && obj.name !== 'Camera' && obj.name !== 'Directional Light' && obj.name !== 'Environment') {
+                        obj.scale.x *= 0.90;
+                        obj.scale.y *= 0.90;
+                        obj.scale.z *= 0.90;
+                    }
+                });
+            }
+            
             this.handleResize();
             window.addEventListener('resize', () => this.handleResize());
             
         } catch (error) {
             console.error('Error loading Spline scene:', error);
+        }
+    }
+
+    /**
+     * Pull the camera back and slightly scale down the object on Desktop viewports.
+     * This creates a 'deeper' feeling of distance and gives more room for interaction.
+     */
+    adjustCameraForDesktop() {
+        if (window.innerWidth <= 900) return; // Desktop only
+
+        try {
+            const camera = this.app.findObjectByName('Camera');
+            if (camera) {
+                // Push camera significantly further back (Desktop only zoom-out)
+                camera.position.z = camera.position.z * 3.0;
+                console.log('Desktop: Camera zoomed out significantly to', camera.position.z);
+            }
+
+            // Scale down the object further for Desktop (requested 10% on top of previous adjustment)
+            const allObjects = this.app.getAllObjects();
+            if (allObjects && allObjects.length > 0) {
+                for (const obj of allObjects) {
+                    if (obj.name && obj.name !== 'Camera' && obj.name !== 'Directional Light' && obj.name !== 'Environment') {
+                        obj.scale.x *= 0.315; 
+                        obj.scale.y *= 0.315;
+                        obj.scale.z *= 0.315;
+                        console.log('Desktop: Scaled down object to 0.315 scale:', obj.name);
+                        break; 
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('Could not adjust desktop camera/object:', err);
         }
     }
 
@@ -76,6 +124,6 @@ class SplineHandler {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('spline-canvas')) {
-        new SplineHandler('spline-canvas', 'https://prod.spline.design/PfMVBprKBdueuM0a/scene.splinecode');
+        new SplineHandler('spline-canvas', 'https://prod.spline.design/a0rHWFtuaJKy618c/scene.splinecode');
     }
 });

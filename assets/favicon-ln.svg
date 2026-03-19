@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Background Gradient matching the 3D logo -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a1a10"/>
+      <stop offset="100%" stop-color="#140c06"/>
+    </linearGradient>
+    
+    <!-- Central Orange Glow -->
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e46f2d" stop-opacity="0.35"/>
+      <stop offset="80%" stop-color="#e46f2d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Base block -->
+  <rect width="60" height="60" x="2" y="2" rx="14" fill="url(#bgGrad)" stroke="#e46f2d" stroke-width="2" stroke-opacity="0.6"/>
+  
+  <!-- Glow Layer -->
+  <rect width="60" height="60" x="2" y="2" rx="14" fill="url(#glow)"/>
+  
+  <!-- Text -->
+  <text x="32" y="42" font-family="'Syne', 'Inter', system-ui, sans-serif" font-weight="800" font-size="26" fill="rgba(255,255,255,0.9)" text-anchor="middle" letter-spacing="-1">LN</text>
+</svg>

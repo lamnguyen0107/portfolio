@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="./css/styles.css">
   <link rel="stylesheet" href="./css/glass-theme.css">
   <link rel="stylesheet" href="./css/spline-theme.css">
-  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon-ln.svg">
 </head>
 
 <body>
@@ -35,8 +35,16 @@
   <div class="capture-frame">
     <header class="site-header glass-panel">
       <a class="brand brand-logo" href="#hero" aria-label="Lam Nguyen - Home">
-        <span class="logo-ln" aria-hidden="true">LN</span>
-        <span class="logo-avatar" aria-hidden="true"></span>
+        <div class="logo-cube-container">
+          <div class="logo-cube">
+            <div class="cube-face front">LN</div>
+            <div class="cube-face back">LN</div>
+            <div class="cube-face right">LN</div>
+            <div class="cube-face left">LN</div>
+            <div class="cube-face top">LN</div>
+            <div class="cube-face bottom">LN</div>
+          </div>
+        </div>
       </a>
 
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav"
@@ -74,9 +82,6 @@
 
     <main>
       <section id="hero" class="section hero reveal">
-        <div class="bloom-gradient bloom-orange"></div>
-        <div class="bloom-gradient bloom-moss" style="right: 5vw; bottom: 0;"></div>
-
         <!-- Spline 3D: absolute positioned, covers full hero for interaction -->
         <div class="hero-spline-bg">
           <canvas id="spline-canvas"></canvas>

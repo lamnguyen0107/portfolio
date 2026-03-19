@@ -338,9 +338,26 @@ p {
 .hero.section {
   overflow: visible;
   position: relative;
+  z-index: 5;
   min-height: 90vh;
   display: flex;
   align-items: center;
+}
+
+/* Background Atmospheric Blur for Hero Only */
+.hero.section::before {
+  content: '';
+  position: absolute;
+  /* Mở rộng khung ra cực rộng để blur không bao giờ bị cắt cụt ở ranh giới hero */
+  inset: -50vh -50vw;
+  pointer-events: none;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at 45% 50%, rgba(228, 111, 45, 0.22) 0%, transparent 70%),
+    radial-gradient(circle at 75% 55%, rgba(93, 122, 103, 0.26) 0%, transparent 75%);
+  filter: blur(200px); /* Tăng blur cực đại cho độ mịn tuyệt đối */
+  mix-blend-mode: screen;
+  opacity: 0.8;
 }
 
 /* Spline 3D fullscreen background */
@@ -348,7 +365,7 @@ p {
   position: absolute;
   /* Kéo dài diện tích tương tác ra ngoài khung nhìn để mượt hơn (bù lại margin/padding dư) */
   top: -15vh;
-  bottom: -15vh;
+  bottom: -30vh;
   left: 50%;
   width: 120vw;
   transform: translateX(-50%);
@@ -357,11 +374,11 @@ p {
   max-width: 120vw;
 }
 
-/* Đẩy section kế tiếp (Works) lên một chút để che lấp phần cắt của hero */
+/* Đẩy section kế tiếp (Works) xuống để không che phần hero interaction */
 #works {
   position: relative;
   z-index: 3;
-  margin-top: 10vh; /* Pushed down by 15% (from -5vh to 10vh) to avoid viewport overlap */
+  margin-top: 30vh;
   padding-top: 5vh;
 }
 
