@@ -468,6 +468,7 @@ p {
     align-items: center;
     text-align: center;
     max-width: 100%;
+    pointer-events: auto; /* Enable touch interaction for scrolling over text */
   }
 
   .hero.section {
