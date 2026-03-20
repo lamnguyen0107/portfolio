@@ -336,7 +336,7 @@ p {
 
 /* --- Hero Section --- */
 .hero.section {
-  overflow: visible;
+  overflow: visible; /* Prevent internal clipping; body-level clip handles horizontal overflow */
   position: relative;
   z-index: 5;
   min-height: 90vh;
@@ -360,25 +360,25 @@ p {
   opacity: 0.8;
 }
 
-/* Spline 3D fullscreen background */
+/* Spline 3D background - Contained within hero */
 .hero-spline-bg {
   position: absolute;
-  /* Kéo dài diện tích tương tác ra ngoài khung nhìn để mượt hơn (bù lại margin/padding dư) */
-  top: -15vh;
-  bottom: -30vh;
+  top: 0;
+  bottom: 0;
   left: 50%;
-  width: 120vw;
-  transform: translateX(-50%);
+  width: 150vw; /* Wider to ensure no clipping within interaction area */
   z-index: 1;
-  overflow: visible;
-  max-width: 120vw;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Đẩy section kế tiếp (Works) xuống để không che phần hero interaction */
 #works {
   position: relative;
   z-index: 3;
-  margin-top: 30vh;
+  margin-top: 15vh; /* Reduced from 30vh since hero bleed is gone */
   padding-top: 5vh;
 }
 
@@ -414,24 +414,21 @@ p {
 }
 
   /* --- Desktop & Tablet (Side-by-side): text left --- */
-@media (min-width: 800px) {
+@media (min-width: 801px) {
   .hero-content {
-    max-width: 55%; /* Slightly wider for tablet/mid-screens */
+    max-width: 50%;
   }
 
-  /* Shift Spline Object to the right on desktop to avoid text overlap */
+  /* Desktop: Centered balance + Expanded interaction area + Updated Global Scaling */
   .hero-spline-bg {
-    transform: translateX(-20%); /* Move towards the right */
-    width: 100vw;
+    top: -15vh;
+    bottom: -15vh;
+    transform: translateX(-55%) scale(0.92); /* Scaled down 8% as requested */
   }
 
   @media (min-width: 1024px) {
-    .hero-content {
-      max-width: 50%;
-    }
-    
     .hero-spline-bg {
-      transform: translateX(-15%); /* Further right on large screens */
+      transform: translateX(-52%) scale(0.92);
     }
   }
 
@@ -476,15 +473,15 @@ p {
     border-radius: 24px;
   }
 
-  /* Mobile hero: text below Spline */
+  /* Mobile hero: re-balanced and updated Global Scaling */
   .hero-spline-bg {
-    width: 180vw;
-    max-width: 180vw;
+    width: 200vw;
+    max-width: 200vw;
     left: 50%;
-    top: -50vh; /* Nâng cao vừa phải, thấp hơn -55vh một chút để cân đối */
-    bottom: -5vh;
-    transform: translateX(-58%) scale(0.9); /* Trả vật thể về bên phải một chút so với -65% */
-    transform-origin: top center;
+    top: -65vh;
+    bottom: 0;
+    transform: translateX(-65%) scale(0.83); /* Further reduced by 5% to scale(0.83) */
+    pointer-events: auto;
   }
 
   .hero-overlay {

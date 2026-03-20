@@ -24,67 +24,63 @@ class SplineHandler {
             // Ensure the canvas background is transparent
             this.canvas.style.backgroundColor = 'transparent';
 
-            // Hide Spline watermark
-            this.hideWatermark();
-            
-            // Adjust camera & scale for Desktop to make object feel further away
-            this.adjustCameraForDesktop();
-            
-            // Global scale reduction for ALL devices (10% smaller as requested)
-            const allObjects = this.app.getAllObjects();
-            if (allObjects && allObjects.length > 0) {
-                allObjects.forEach(obj => {
-                    if (obj.name && obj.name !== 'Camera' && obj.name !== 'Directional Light' && obj.name !== 'Environment') {
-                        obj.scale.x *= 0.90;
-                        obj.scale.y *= 0.90;
-                        obj.scale.z *= 0.90;
-                    }
-                });
-            }
-            
-            this.handleResize();
-            window.addEventListener('resize', () => this.handleResize());
-            
-        } catch (error) {
-            console.error('Error loading Spline scene:', error);
-        }
-    }
-
-    /**
-     * Pull the camera back and slightly scale down the object on Desktop viewports.
-     * This creates a 'deeper' feeling of distance and gives more room for interaction.
-     */
-    adjustCameraForDesktop() {
-        if (window.innerWidth <= 900) return; // Desktop only
-
+        // Hide Spline watermark
+        this.hideWatermark();
+        
+        // Optimize for device resolution
         try {
-            const allObjects = this.app.getAllObjects();
-            
-            // 1. First, zoom out ALL cameras
+            if (this.app.setPixelRatio) {
+                this.app.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit to 2 for performance
+            }
+        } catch (e) {
+            console.warn('Could not set pixel ratio:', e);
+        }
+        
+        // Global scale: Reverted to 1.0 for original proportions
+        const isMobile = window.innerWidth <= 800;
+        const baseScale = 1.0; 
+        
+        const allObjects = this.app.getAllObjects();
+        if (allObjects && allObjects.length > 0) {
             allObjects.forEach(obj => {
+                // If it's a visual object (not camera/light/environment)
+                const isVisual = obj.name && !['Camera', 'Directional Light', 'Environment', 'Point Light', 'Sun', 'Light'].some(n => obj.name.includes(n));
+                
+                if (isVisual && obj.scale) {
+                    obj.scale.x *= baseScale;
+                    obj.scale.y *= baseScale;
+                    obj.scale.z *= baseScale;
+                }
+                
+                // Keep camera adjustments to ensure full object cluster visibility
                 const isCamera = obj.type === 'camera' || (obj.name && obj.name.toLowerCase().includes('camera'));
                 if (isCamera && obj.position) {
-                    // Moving camera further away (~3x from original)
-                    // If Z is negative or weird, we try to adjust reasonably
-                    const zoomFactor = 3.2; 
-                    obj.position.z *= zoomFactor;
-                    obj.position.x *= zoomFactor * 0.5; // Slight offset to look from side
-                    console.log('Desktop: Zoomed out camera:', obj.name, 'to', obj.position.z);
+                    // Optimized factors to prevent frustum clipping
+                    const frustumFactor = isMobile ? 1.55 : 1.25;
+                    obj.position.z *= frustumFactor;
+                    console.log('Optimized Camera Frustum for:', obj.name);
                 }
             });
-
-            // 2. Second, apply a consistent small scale reduction to ALL visual objects
-            // But only those that don't have a parent (to avoid double-scaling)
-            // Note: In @splinetool/runtime, objects might not have .parent exposed simply,
-            // but we can assume root-level objects have specific names or types.
-            // For now, let's just use the camera zoom as the primary 'size' control on desktop.
-            
-            console.log('Desktop: Scene adjusted via camera zoom.');
-            
-        } catch (err) {
-            console.warn('Could not adjust desktop camera/objects:', err);
         }
+        
+        // Final resize check
+        this.handleResize();
+        window.addEventListener('resize', () => this.handleResize());
+        
+    } catch (error) {
+        console.error('Error loading Spline scene:', error);
     }
+}
+
+/**
+ * Centering adjustment for Desktop viewports.
+ * Relying more on CSS positioning now for a cleaner "lying fully within hero" look.
+ */
+adjustCameraForDesktop() {
+    // Current CSS (glass-theme.css) handles the shifting now.
+    // This allows the object to stay centered within its interaction container.
+    console.log('Desktop: Optimized via CSS and object scale.');
+}
 
     /**
      * Hide the "Built with Spline" watermark logo.
