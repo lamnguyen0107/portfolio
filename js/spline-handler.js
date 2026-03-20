@@ -58,28 +58,31 @@ class SplineHandler {
         if (window.innerWidth <= 900) return; // Desktop only
 
         try {
-            const camera = this.app.findObjectByName('Camera');
-            if (camera) {
-                // Push camera significantly further back (Desktop only zoom-out)
-                camera.position.z = camera.position.z * 3.0;
-                console.log('Desktop: Camera zoomed out significantly to', camera.position.z);
-            }
-
-            // Scale down the object further for Desktop (requested 10% on top of previous adjustment)
             const allObjects = this.app.getAllObjects();
-            if (allObjects && allObjects.length > 0) {
-                for (const obj of allObjects) {
-                    if (obj.name && obj.name !== 'Camera' && obj.name !== 'Directional Light' && obj.name !== 'Environment') {
-                        obj.scale.x *= 0.315; 
-                        obj.scale.y *= 0.315;
-                        obj.scale.z *= 0.315;
-                        console.log('Desktop: Scaled down object to 0.315 scale:', obj.name);
-                        break; 
-                    }
+            
+            // 1. First, zoom out ALL cameras
+            allObjects.forEach(obj => {
+                const isCamera = obj.type === 'camera' || (obj.name && obj.name.toLowerCase().includes('camera'));
+                if (isCamera && obj.position) {
+                    // Moving camera further away (~3x from original)
+                    // If Z is negative or weird, we try to adjust reasonably
+                    const zoomFactor = 3.2; 
+                    obj.position.z *= zoomFactor;
+                    obj.position.x *= zoomFactor * 0.5; // Slight offset to look from side
+                    console.log('Desktop: Zoomed out camera:', obj.name, 'to', obj.position.z);
                 }
-            }
+            });
+
+            // 2. Second, apply a consistent small scale reduction to ALL visual objects
+            // But only those that don't have a parent (to avoid double-scaling)
+            // Note: In @splinetool/runtime, objects might not have .parent exposed simply,
+            // but we can assume root-level objects have specific names or types.
+            // For now, let's just use the camera zoom as the primary 'size' control on desktop.
+            
+            console.log('Desktop: Scene adjusted via camera zoom.');
+            
         } catch (err) {
-            console.warn('Could not adjust desktop camera/object:', err);
+            console.warn('Could not adjust desktop camera/objects:', err);
         }
     }
 

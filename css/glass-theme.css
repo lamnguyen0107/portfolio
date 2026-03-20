@@ -413,15 +413,25 @@ p {
   justify-content: center;
 }
 
-/* --- Desktop & Tablet (Side-by-side): text left --- */
+  /* --- Desktop & Tablet (Side-by-side): text left --- */
 @media (min-width: 800px) {
   .hero-content {
     max-width: 55%; /* Slightly wider for tablet/mid-screens */
   }
 
+  /* Shift Spline Object to the right on desktop to avoid text overlap */
+  .hero-spline-bg {
+    transform: translateX(-20%); /* Move towards the right */
+    width: 100vw;
+  }
+
   @media (min-width: 1024px) {
     .hero-content {
       max-width: 50%;
+    }
+    
+    .hero-spline-bg {
+      transform: translateX(-15%); /* Further right on large screens */
     }
   }
 
