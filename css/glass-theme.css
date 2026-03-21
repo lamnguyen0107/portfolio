@@ -535,10 +535,10 @@ p {
     width: 200vw;
     max-width: 200vw;
     left: 50%;
-    top: -65vh;
+    top: -70vh;
     bottom: 0;
-    transform: translateX(-65%) scale(0.83);
-    /* Further reduced by 5% to scale(0.83) */
+    transform: translateX(-55%) scale(0.62);
+    /* Move up ~5%, right 10%, scale reduced slightly */
     pointer-events: auto;
   }
 

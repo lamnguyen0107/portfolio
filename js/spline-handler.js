@@ -20,67 +20,67 @@ class SplineHandler {
         try {
             await this.app.load(this.sceneUrl);
             console.log('Spline scene loaded successfully.');
-            
+
             // Ensure the canvas background is transparent
             this.canvas.style.backgroundColor = 'transparent';
 
-        // Hide Spline watermark
-        this.hideWatermark();
-        
-        // Optimize for device resolution
-        try {
-            if (this.app.setPixelRatio) {
-                this.app.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit to 2 for performance
-            }
-        } catch (e) {
-            console.warn('Could not set pixel ratio:', e);
-        }
-        
-        // Global scale: Reverted to 1.0 for original proportions
-        const isMobile = window.innerWidth <= 800;
-        const baseScale = 1.0; 
-        
-        const allObjects = this.app.getAllObjects();
-        if (allObjects && allObjects.length > 0) {
-            allObjects.forEach(obj => {
-                // If it's a visual object (not camera/light/environment)
-                const isVisual = obj.name && !['Camera', 'Directional Light', 'Environment', 'Point Light', 'Sun', 'Light'].some(n => obj.name.includes(n));
-                
-                if (isVisual && obj.scale) {
-                    obj.scale.x *= baseScale;
-                    obj.scale.y *= baseScale;
-                    obj.scale.z *= baseScale;
-                }
-                
-                // Keep camera adjustments to ensure full object cluster visibility
-                const isCamera = obj.type === 'camera' || (obj.name && obj.name.toLowerCase().includes('camera'));
-                if (isCamera && obj.position) {
-                    // Optimized factors to prevent frustum clipping
-                    const frustumFactor = isMobile ? 1.55 : 1.25;
-                    obj.position.z *= frustumFactor;
-                    console.log('Optimized Camera Frustum for:', obj.name);
-                }
-            });
-        }
-        
-        // Final resize check
-        this.handleResize();
-        window.addEventListener('resize', () => this.handleResize());
-        
-    } catch (error) {
-        console.error('Error loading Spline scene:', error);
-    }
-}
+            // Hide Spline watermark
+            this.hideWatermark();
 
-/**
- * Centering adjustment for Desktop viewports.
- * Relying more on CSS positioning now for a cleaner "lying fully within hero" look.
- */
-adjustCameraForDesktop() {
-    // Current CSS (glass-theme.css) handles the shifting now.
-    // This allows the object to stay centered within its interaction container.
-    console.log('Desktop: Optimized via CSS and object scale.');
-}
+            // Optimize for device resolution
+            try {
+                if (this.app.setPixelRatio) {
+                    this.app.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit to 2 for performance
+                }
+            } catch (e) {
+                console.warn('Could not set pixel ratio:', e);
+            }
+
+            // Global scale: Reverted to 1.0 for original proportions
+            const isMobile = window.innerWidth <= 800;
+            const baseScale = 1.0;
+
+            const allObjects = this.app.getAllObjects();
+            if (allObjects && allObjects.length > 0) {
+                allObjects.forEach(obj => {
+                    // If it's a visual object (not camera/light/environment)
+                    const isVisual = obj.name && !['Camera', 'Directional Light', 'Environment', 'Point Light', 'Sun', 'Light'].some(n => obj.name.includes(n));
+
+                    if (isVisual && obj.scale) {
+                        obj.scale.x *= baseScale;
+                        obj.scale.y *= baseScale;
+                        obj.scale.z *= baseScale;
+                    }
+
+                    // Keep camera adjustments to ensure full object cluster visibility
+                    const isCamera = obj.type === 'camera' || (obj.name && obj.name.toLowerCase().includes('camera'));
+                    if (isCamera && obj.position) {
+                        // Optimized factors to prevent frustum clipping
+                        const frustumFactor = isMobile ? 1.55 : 1.25;
+                        obj.position.z *= frustumFactor;
+                        console.log('Optimized Camera Frustum for:', obj.name);
+                    }
+                });
+            }
+
+            // Final resize check
+            this.handleResize();
+            window.addEventListener('resize', () => this.handleResize());
+
+        } catch (error) {
+            console.error('Error loading Spline scene:', error);
+        }
+    }
+
+    /**
+     * Centering adjustment for Desktop viewports.
+     * Relying more on CSS positioning now for a cleaner "lying fully within hero" look.
+     */
+    adjustCameraForDesktop() {
+        // Current CSS (glass-theme.css) handles the shifting now.
+        // This allows the object to stay centered within its interaction container.
+        console.log('Desktop: Optimized via CSS and object scale.');
+    }
 
     /**
      * Hide the "Built with Spline" watermark logo.
