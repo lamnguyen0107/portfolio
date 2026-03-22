@@ -31,7 +31,7 @@ if (!isFigmaCapture && typeof Lenis !== 'undefined') {
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
-    
+
     gsap.ticker.lagSmoothing(0);
   } else {
     // Fallback if GSAP is not loaded
@@ -44,7 +44,7 @@ if (!isFigmaCapture && typeof Lenis !== 'undefined') {
 
   // Handle anchor links for smooth scrolling via Lenis
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
+    anchor.addEventListener('click', function (e) {
       e.preventDefault();
       const target = document.querySelector(this.getAttribute('href'));
       if (target) {
@@ -64,17 +64,17 @@ if (yearEl) {
 // -------------------------------------------------------------
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
   const revealItems = document.querySelectorAll(".reveal");
-  
+
   revealItems.forEach((item) => {
     // Check if item is already high in the viewport (like Hero)
     const rect = item.getBoundingClientRect();
     const isAboveFold = rect.top < window.innerHeight * 0.5;
 
-    gsap.fromTo(item, 
-      { 
-        opacity: isAboveFold ? 1 : 0, 
-        y: isAboveFold ? 0 : 40 
-      }, 
+    gsap.fromTo(item,
+      {
+        opacity: isAboveFold ? 1 : 0,
+        y: isAboveFold ? 0 : 40
+      },
       {
         opacity: 1,
         y: 0,
@@ -187,3 +187,4 @@ window.addEventListener("load", () => {
 
   // Stacking logic removed
 });
+

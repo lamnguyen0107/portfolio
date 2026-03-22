@@ -51,29 +51,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 ease: "power3.inOut"
             });
 
-            // Animate out current letters (slide UP)
-            gsap.to(currentItem.querySelectorAll('span'), {
-                y: "-120%",
-                opacity: 0,
-                duration: duration,
-                stagger: staggerDelay,
-                ease: "power3.inOut",
-                onComplete: () => {
-                    gsap.set(currentItem, { opacity: 0 }); // Hide container when finished
-                }
-            });
+            const isMobile = window.innerWidth <= 680;
 
-            // Animate in next letters (slide UP from bottom)
-            gsap.fromTo(nextItem.querySelectorAll('span'), {
-                y: "120%",
-                opacity: 0,
-            }, {
-                y: "0%",
-                opacity: 1,
-                duration: duration,
-                stagger: staggerDelay,
-                ease: "power3.inOut"
-            });
+            if (isMobile) {
+                // Mobile: Zoom out from center
+                gsap.to(currentItem.querySelectorAll('span'), {
+                    scale: 0.5,
+                    opacity: 0,
+                    duration: duration * 0.8,
+                    stagger: { amount: 0.15, from: "center" },
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        gsap.set(currentItem, { opacity: 0 }); // Hide container when finished
+                    }
+                });
+
+                // Mobile: Zoom in from out (scale 0 -> 1)
+                gsap.fromTo(nextItem.querySelectorAll('span'), {
+                    scale: 0,
+                    opacity: 0,
+                    y: "0%"
+                }, {
+                    scale: 1,
+                    opacity: 1,
+                    y: "0%",
+                    duration: duration,
+                    stagger: { amount: 0.3, from: "center" },
+                    ease: "back.out(1.5)"
+                });
+            } else {
+                // Desktop: Slide UP
+                gsap.to(currentItem.querySelectorAll('span'), {
+                    y: "-120%",
+                    opacity: 0,
+                    duration: duration,
+                    stagger: staggerDelay,
+                    ease: "power3.inOut",
+                    onComplete: () => {
+                        gsap.set(currentItem, { opacity: 0 }); // Hide container when finished
+                    }
+                });
+
+                gsap.fromTo(nextItem.querySelectorAll('span'), {
+                    y: "120%",
+                    opacity: 0,
+                }, {
+                    y: "0%",
+                    opacity: 1,
+                    duration: duration,
+                    stagger: staggerDelay,
+                    ease: "power3.inOut"
+                });
+            }
 
             currentIndex = nextIndex;
             setTimeout(rotateText, cycleTime);
