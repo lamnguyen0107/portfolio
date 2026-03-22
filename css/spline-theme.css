@@ -9,8 +9,10 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: -2; /* Behinds the main content layers */
-  background: #000; /* Dark fallback */
+  z-index: -2;
+  /* Behinds the main content layers */
+  background: #000;
+  /* Dark fallback */
   overflow: hidden;
 }
 
@@ -31,14 +33,20 @@
   width: 48px;
   height: 48px;
   border: 4px solid rgba(255, 255, 255, 0.1);
-  border-left-color: #ff8c00; /* Main accent color */
+  border-left-color: #ff8c00;
+  /* Main accent color */
   border-radius: 50%;
   animation: spline-spin 1s linear infinite;
 }
 
 @keyframes spline-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Fade-in Effect for the scene */
@@ -49,11 +57,11 @@
 /* ===== Hide Spline Watermark ===== */
 .hero-spline-fullscreen a[href*="spline"],
 .hero-spline-fullscreen a[href*="splinetool"],
-.hero-spline-fullscreen > a,
+.hero-spline-fullscreen>a,
 .hero-spline-fullscreen div[style*="position: absolute"] a,
 .hero-spline-container a[href*="spline"],
 .hero-spline-container a[href*="splinetool"],
-.hero-spline-container > a,
+.hero-spline-container>a,
 .hero-spline-container div[style*="position: absolute"] a {
   display: none !important;
   visibility: hidden !important;
@@ -67,7 +75,42 @@
 /* Responsive adjustment for Mobile (Skill Strategy #9.2) */
 @media (max-width: 768px) {
   #spline-scene-container {
-    opacity: 0.6; /* Dim it for better mobile readability */
+    opacity: 0.6;
+    /* Dim it for better mobile readability */
+  }
+
+  /* Optional: Hide Spline on mobile if performance is poor */
+  body.hide-spline-mobile #spline-scene-container {
+    display: none;
+  }
+}
+
+transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== Hide Spline Watermark ===== */
+.hero-spline-fullscreen a[href*="spline"],
+.hero-spline-fullscreen a[href*="splinetool"],
+.hero-spline-fullscreen>a,
+.hero-spline-fullscreen div[style*="position: absolute"] a,
+.hero-spline-container a[href*="spline"],
+.hero-spline-container a[href*="splinetool"],
+.hero-spline-container>a,
+.hero-spline-container div[style*="position: absolute"] a {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Responsive adjustment for Mobile (Skill Strategy #9.2) */
+@media (max-width: 768px) {
+  #spline-scene-container {
+    opacity: 0.6;
+    /* Dim it for better mobile readability */
   }
 
   /* Optional: Hide Spline on mobile if performance is poor */
