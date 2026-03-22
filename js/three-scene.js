@@ -74,14 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Floating ambient particles/dust in the air
         const dustGeometry = new THREE.BufferGeometry();
-        const dustCount = 400;
+        const dustCount = 320; // Reduced by 20% (was 400)
         const dustPos = new Float32Array(dustCount * 3);
         for (let i = 0; i < dustCount * 3; i++) {
             dustPos[i] = (Math.random() - 0.5) * 100;
         }
         dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
         const dustMaterial = new THREE.PointsMaterial({
-            size: 0.12, color: 0x5d7a67, transparent: true, opacity: 0.4
+            size: 0.12, color: 0x5d7a67, transparent: true, opacity: 0.3 // Slightly lower opacity
         });
         const dustMesh = new THREE.Points(dustGeometry, dustMaterial);
         scene.add(dustMesh);
