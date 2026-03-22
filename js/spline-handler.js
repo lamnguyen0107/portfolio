@@ -53,13 +53,13 @@ class SplineHandler {
                     }
 
                     // Keep camera adjustments to ensure full object cluster visibility
-                    const isCamera = obj.type === 'camera' || (obj.name && obj.name.toLowerCase().includes('camera'));
-                    if (isCamera && obj.position) {
-                        // Optimized factors to prevent frustum clipping
-                        const frustumFactor = isMobile ? 1.55 : 1.25;
-                        obj.position.z *= frustumFactor;
-                        console.log('Optimized Camera Frustum for:', obj.name);
-                    }
+                    // The following was commented out to prevent skewing the new Spline scenes:
+                    // const isCamera = obj.type === 'camera' || (obj.name && obj.name.toLowerCase().includes('camera'));
+                    // if (isCamera && obj.position) {
+                    //     const frustumFactor = isMobile ? 1.55 : 1.25;
+                    //     obj.position.z *= frustumFactor;
+                    //     console.log('Optimized Camera Frustum for:', obj.name);
+                    // }
                 });
             }
 
