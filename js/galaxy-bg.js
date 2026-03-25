@@ -5,6 +5,11 @@ class GalaxyBG {
         this.container = document.getElementById(containerId);
         if (!this.container) return;
 
+        const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+        const isCoarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
+        const isMobileViewport = window.matchMedia?.('(max-width: 800px)')?.matches ?? window.innerWidth <= 800;
+        const lowPower = prefersReducedMotion || isCoarsePointer || isMobileViewport;
+
         this.options = {
             focal: [0.5, 0.5],
             rotation: [1.0, 0.0],
@@ -21,9 +26,32 @@ class GalaxyBG {
             rotationSpeed: 0.03,
             autoCenterRepulsion: 0,
             transparent: true,
+            // Performance/feel tuning
+            layers: lowPower ? 3 : 5,
+            maxDpr: lowPower ? 1.0 : 1.5,
+            targetFps: lowPower ? 30 : 60,
+            lowPower,
+            mouseLerp: lowPower ? 0.35 : 0.65, // higher = less delay
+            activeLerp: lowPower ? 0.25 : 0.55,
+            scrollLerp: 0.04,
             ...options
         };
 
+        // Apply a conservative preset unless explicitly overridden by options.
+        if (lowPower) {
+            if (!('density' in options)) this.options.density = Math.min(this.options.density, 0.55);
+            if (!('glowIntensity' in options)) this.options.glowIntensity = Math.min(this.options.glowIntensity, 0.14);
+            if (!('twinkleIntensity' in options)) this.options.twinkleIntensity = Math.min(this.options.twinkleIntensity, 0.18);
+            if (!('rotationSpeed' in options)) this.options.rotationSpeed = Math.min(this.options.rotationSpeed, 0.02);
+            if (!('repulsionStrength' in options)) this.options.repulsionStrength = Math.min(this.options.repulsionStrength, 1.0);
+            if (!('mouseRepulsion' in options)) this.options.mouseRepulsion = false;
+        }
+        if (prefersReducedMotion) {
+            if (!('rotationSpeed' in options)) this.options.rotationSpeed = 0.0;
+            if (!('twinkleIntensity' in options)) this.options.twinkleIntensity = 0.0;
+        }
+
+        // Avoid per-event allocations.
         this.targetMousePos = { x: 0.5, y: 0.5 };
         this.smoothMousePos = { x: 0.5, y: 0.5 };
         this.targetMouseActive = 0.0;
@@ -32,6 +60,10 @@ class GalaxyBG {
         // Add properties for smooth scroll speed blending
         this.targetScrollSpeed = 0.0;
         this.smoothScrollSpeed = 0.0;
+
+        this._lastT = 0;
+        this._lastRenderT = 0;
+        this._paused = false;
 
         this.init();
     }
@@ -51,8 +83,10 @@ void main() {
     }
 
     get fragmentShader() {
+        const layers = Math.max(2, Math.min(8, Number(this.options.layers) || 5));
+        const precision = this.options.lowPower ? 'mediump' : 'highp';
         return `
-precision highp float;
+precision ${precision} float;
 
 uniform float uTime;
 uniform vec3 uResolution;
@@ -75,7 +109,7 @@ uniform bool uTransparent;
 
 varying vec2 vUv;
 
-#define NUM_LAYER 5.0
+#define NUM_LAYER ${layers}.0
 #define STAR_COLOR_CUTOFF 0.2
 #define MAT45 mat2(0.7071, -0.7071, 0.7071, 0.7071)
 #define PERIOD 3.0
@@ -209,9 +243,13 @@ void main() {
     }
 
     init() {
+        const deviceDpr = window.devicePixelRatio || 1;
+        this.dpr = Math.min(deviceDpr, Math.max(0.75, Number(this.options.maxDpr) || 1.5));
+
         this.renderer = new Renderer({
             alpha: this.options.transparent,
-            premultipliedAlpha: false
+            premultipliedAlpha: false,
+            dpr: this.dpr
         });
         this.gl = this.renderer.gl;
 
@@ -261,15 +299,25 @@ void main() {
         this.container.appendChild(this.gl.canvas);
 
         if (this.options.mouseInteraction) {
-            window.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-            window.addEventListener('mouseleave', () => this.handleMouseLeave());
+            // Use window level listeners to capture movement even through other elements
+            window.addEventListener('pointermove', (e) => this.handleMouseMove(e), { passive: true });
+            window.addEventListener('pointerleave', () => this.handleMouseLeave(), { passive: true });
         }
 
-        // Revised Scroll interaction for a smoother, slower feel
+        // Revised scroll interaction: passive + rAF to avoid scroll-handler spam.
+        this._scrollRaf = 0;
         window.addEventListener('scroll', () => {
-            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-            // Smaller multiplier (0.6 instead of 2.0) for a more subtle speed up
-            this.targetScrollSpeed = scrollPercent * 0.6;
+            if (this._scrollRaf) return;
+            this._scrollRaf = requestAnimationFrame(() => {
+                this._scrollRaf = 0;
+                const denom = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+                const scrollPercent = window.scrollY / denom;
+                this.targetScrollSpeed = scrollPercent * 0.6;
+            });
+        }, { passive: true });
+
+        document.addEventListener('visibilitychange', () => {
+            this._paused = document.hidden;
         });
 
         requestAnimationFrame((t) => this.update(t));
@@ -279,6 +327,7 @@ void main() {
         if (!this.container) return;
         const width = this.container.offsetWidth;
         const height = this.container.offsetHeight;
+        if (this.renderer && this.dpr) this.renderer.dpr = this.dpr;
         this.renderer.setSize(width, height);
         if (this.program) {
             this.program.uniforms.uResolution.value = new Color(
@@ -291,9 +340,12 @@ void main() {
 
     handleMouseMove(e) {
         const rect = this.container.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = 1.0 - (e.clientY - rect.top) / rect.height;
-        this.targetMousePos = { x, y };
+        const safeW = Math.max(1, rect.width);
+        const safeH = Math.max(1, rect.height);
+        const x = (e.clientX - rect.left) / safeW;
+        const y = 1.0 - (e.clientY - rect.top) / safeH;
+        this.targetMousePos.x = Math.min(1, Math.max(0, x));
+        this.targetMousePos.y = Math.min(1, Math.max(0, y));
         this.targetMouseActive = 1.0;
     }
 
@@ -304,17 +356,33 @@ void main() {
     update(t) {
         requestAnimationFrame((t) => this.update(t));
 
+        if (this._paused) return;
+
+        const dt = this._lastT ? Math.min(0.05, (t - this._lastT) * 0.001) : (1 / 60);
+        this._lastT = t;
+
+        // Respect a lower FPS budget on mobile/low-power devices.
+        const frameBudget = 1000 / Math.max(1, this.options.targetFps || 60);
+        if (this._lastRenderT && (t - this._lastRenderT) < frameBudget) return;
+        this._lastRenderT = t;
+
         this.program.uniforms.uTime.value = t * 0.001;
         this.program.uniforms.uStarSpeed.value = (t * 0.001 * this.options.starSpeed) / 10.0;
 
-        const lerpFactor = 0.05;
-        // Smoothly interpolate mouse position and active state
-        this.smoothMousePos.x += (this.targetMousePos.x - this.smoothMousePos.x) * lerpFactor;
-        this.smoothMousePos.y += (this.targetMousePos.y - this.smoothMousePos.y) * lerpFactor;
-        this.smoothMouseActive += (this.targetMouseActive - this.smoothMouseActive) * lerpFactor;
+        // Frame-rate independent smoothing (less perceived delay).
+        const mouseK = Number(this.options.mouseLerp) || 0.5;
+        const activeK = Number(this.options.activeLerp) || 0.4;
+        const scrollK = Number(this.options.scrollLerp) || 0.04;
+        const mouseAlpha = 1 - Math.pow(1 - mouseK, dt * 60);
+        const activeAlpha = 1 - Math.pow(1 - activeK, dt * 60);
+        const scrollAlpha = 1 - Math.pow(1 - scrollK, dt * 60);
+
+        this.smoothMousePos.x += (this.targetMousePos.x - this.smoothMousePos.x) * mouseAlpha;
+        this.smoothMousePos.y += (this.targetMousePos.y - this.smoothMousePos.y) * mouseAlpha;
+        this.smoothMouseActive += (this.targetMouseActive - this.smoothMouseActive) * activeAlpha;
 
         // Smoothly interpolate scroll speed multiplier
-        this.smoothScrollSpeed += (this.targetScrollSpeed - this.smoothScrollSpeed) * (lerpFactor * 0.5);
+        this.smoothScrollSpeed += (this.targetScrollSpeed - this.smoothScrollSpeed) * scrollAlpha;
         this.program.uniforms.uSpeed.value = this.options.speed + this.smoothScrollSpeed;
 
         this.program.uniforms.uMouse.value[0] = this.smoothMousePos.x;
