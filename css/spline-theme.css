@@ -84,37 +84,3 @@
     display: none;
   }
 }
-
-transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* ===== Hide Spline Watermark ===== */
-.hero-spline-fullscreen a[href*="spline"],
-.hero-spline-fullscreen a[href*="splinetool"],
-.hero-spline-fullscreen>a,
-.hero-spline-fullscreen div[style*="position: absolute"] a,
-.hero-spline-container a[href*="spline"],
-.hero-spline-container a[href*="splinetool"],
-.hero-spline-container>a,
-.hero-spline-container div[style*="position: absolute"] a {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
-}
-
-/* Responsive adjustment for Mobile (Skill Strategy #9.2) */
-@media (max-width: 768px) {
-  #spline-scene-container {
-    opacity: 0.6;
-    /* Dim it for better mobile readability */
-  }
-
-  /* Optional: Hide Spline on mobile if performance is poor */
-  body.hide-spline-mobile #spline-scene-container {
-    display: none;
-  }
-}
