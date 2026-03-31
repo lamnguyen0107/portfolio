@@ -104,7 +104,7 @@ h1 {
 }
 
 .brand {
-  font-family: "Syne", sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   text-decoration: none;
   color: var(--moss-900);
@@ -148,7 +148,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Syne", sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-weight: 800;
   font-size: 0.72rem;
   letter-spacing: -0.05em;
@@ -292,7 +292,8 @@ main,
 h1,
 h2,
 h3 {
-  font-family: "Syne", sans-serif;
+  font-family: "Space Grotesk", sans-serif;
+  font-variant-numeric: tabular-nums;
   line-height: 1.15;
   margin-top: 0;
 }
@@ -427,7 +428,6 @@ h2 {
   display: block;
   transform: translateY(var(--media-shift, 0px)) scale(var(--media-scale, 1));
   transition: transform 0.8s cubic-bezier(0.2, 0.72, 0.2, 1);
-  will-change: transform;
 }
 
 .project-card:hover .project-media img,
@@ -626,7 +626,6 @@ h2 {
 
 .reveal {
   opacity: 0;
-  will-change: opacity, transform;
 }
 
 .reveal.is-visible {
