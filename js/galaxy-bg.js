@@ -44,7 +44,7 @@ class GalaxyBG {
             if (!('twinkleIntensity' in options)) this.options.twinkleIntensity = Math.min(this.options.twinkleIntensity, 0.18);
             if (!('rotationSpeed' in options)) this.options.rotationSpeed = Math.min(this.options.rotationSpeed, 0.02);
             if (!('repulsionStrength' in options)) this.options.repulsionStrength = Math.min(this.options.repulsionStrength, 1.0);
-            if (!('mouseRepulsion' in options)) this.options.mouseRepulsion = false;
+            if (!('mouseRepulsion' in options)) this.options.mouseRepulsion = true;
         }
         if (prefersReducedMotion) {
             if (!('rotationSpeed' in options)) this.options.rotationSpeed = 0.0;

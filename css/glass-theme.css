@@ -280,6 +280,7 @@ p {
 
 /* Rotating Text Wrapper with Pill Border & Blur */
 .rotating-text-wrapper {
+  font-family: 'Space Grotesk', sans-serif;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -304,14 +305,15 @@ p {
 
 .rotating-text-item {
   position: absolute;
-  top: 0;
-  left: 0;
   height: 100%;
-  white-space: nowrap;
+  white-space: nowrap !important;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
   display: flex;
   align-items: center;
   padding: 0 0.5em;
-  /* Create internal spacing for the pill */
   color: #ffffff;
 }
 
@@ -493,13 +495,15 @@ p {
   /* Center Navbar Links */
   .site-header.glass-panel {
     position: sticky;
-    top: 10px;
+    top: 15px;
     z-index: 50;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-radius: 999px;
     padding: 0.4rem 0.4rem 0.4rem 1.5rem;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
   .nav-drawer {
@@ -804,6 +808,13 @@ p {
   width: 100%;
   max-width: 1120px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.cb-process-grid::before {
+  /* removed connecting line per user request */
+  display: none;
 }
 
 .cb-process-step {
@@ -843,6 +854,102 @@ p {
   margin: 0;
 }
 
+/* 3D Process Graphics */
+.process-graphic {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  perspective: 800px;
+}
+
+.shape-sphere {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, var(--orange-accent) 30%, #3a1c00 80%, #000000 100%);
+  box-shadow: 0 10px 20px rgba(255, 140, 0, 0.4), inset -5px -5px 15px rgba(0,0,0,0.5);
+  animation: floaty 4s ease-in-out infinite;
+}
+
+.shape-pill {
+  width: 50px;
+  height: 20px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #ffffff 0%, var(--orange-accent) 50%, #8a4800 100%);
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4), inset -2px -2px 10px rgba(0,0,0,0.5);
+  transform: rotate(-15deg);
+  animation: floaty 4s ease-in-out infinite reverse;
+}
+
+.shape-cube {
+  position: relative;
+  width: 35px;
+  height: 35px;
+  background: var(--orange-accent);
+  transform-style: preserve-3d;
+  box-shadow: 0 15px 25px rgba(255, 140, 0, 0.4);
+  animation: floaty-spin-slow 8s linear infinite;
+}
+.shape-cube::before {
+  content: ''; position: absolute; width: 100%; height: 100%;
+  background: #ffb84d;
+  transform: rotateX(90deg) translateZ(17.5px);
+  transform-origin: center;
+}
+.shape-cube::after {
+  content: ''; position: absolute; width: 100%; height: 100%;
+  background: #cc7000;
+  transform: rotateY(90deg) translateZ(17.5px);
+  transform-origin: center;
+}
+
+.shape-target {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 8px solid var(--orange-accent);
+  position: relative;
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+  animation: floaty-spin-slow 6s linear infinite;
+}
+.shape-target::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%; width: 14px; height: 14px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.shape-arrow {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #ffffff 0%, var(--orange-accent) 50%, #8a4800 100%);
+  clip-path: polygon(50% 0%, 100% 100%, 50% 75%, 0% 100%);
+  box-shadow: 0 10px 30px rgba(255, 140, 0, 0.5);
+  animation: floaty 3s ease-in-out infinite alternate;
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes floaty-spin {
+  0% { transform: rotateX(60deg) rotateY(20deg) rotateZ(0deg) translateY(0); }
+  50% { transform: rotateX(60deg) rotateY(20deg) rotateZ(180deg) translateY(-10px); }
+  100% { transform: rotateX(60deg) rotateY(20deg) rotateZ(360deg) translateY(0); }
+}
+@keyframes floaty-spin-slow {
+  0% { transform: rotateX(45deg) rotateZ(0deg); }
+  100% { transform: rotateX(45deg) rotateZ(360deg); }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg) scale(0.9); }
+  50% { transform: rotate(180deg) scale(1); }
+  100% { transform: rotate(360deg) scale(0.9); }
+}
+
 .cb-process::after {
   content: '';
   display: block;
@@ -856,6 +963,10 @@ p {
 /* ==========================================================================
    WORKS — Staggered alternating layout
    ========================================================================== */
+.cb-work-date {
+  display: none !important;
+}
+
 .cb-works {
   padding: 6rem 0 4rem;
   position: relative;
@@ -1278,4 +1389,134 @@ p {
 
 .card-isometric-wrap {
   display: none;
+}
+
+/* ==========================================================================
+   NEW REQ FIXES: Mobile Layouts & How I Work Alignment
+   ========================================================================== */
+
+/* How I work Step Row */
+.step-top-row {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  margin-bottom: 1.8rem;
+}
+
+.process-graphic {
+  height: auto !important;
+  margin-bottom: 0 !important;
+  flex-shrink: 0;
+}
+
+.cb-step-num {
+  margin-bottom: 0 !important;
+}
+
+/* Mobile Media Query Fixes */
+@media (max-width: 680px) {
+  /* Fix nav drawer blur */
+  .nav-drawer, 
+  .site-header.glass-panel.menu-open .nav-drawer {
+    background-color: hsla(0, 0%, 5%, 0.6) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+  }
+  
+  /* About Center Alignment */
+  .cb-about-left h2, .cb-about-roles, .cb-about-right p {
+    text-align: center;
+    justify-content: center;
+  }
+
+  .cb-about-roles .rotating-text-wrapper {
+    margin-left: 0.3em;
+  }
+  
+  /* Works Layout Improvement */
+  .cb-work-item {
+    gap: 1.5rem;
+  }
+  .cb-work-info {
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap !important;
+    align-items: center;
+    gap: 0;
+  }
+  .cb-work-num {
+    order: 1;
+    margin: 0 1rem 0.5rem 0 !important;
+    font-size: 1.8rem !important; 
+    line-height: 1;
+  }
+  .cb-work-tags {
+    order: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem !important;
+    flex: 1; 
+  }
+  .cb-work-tags span {
+    margin: 0 !important;
+  }
+  .cb-work-footer {
+    order: 3;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 0.5rem auto !important;
+    width: auto !important;
+  }
+  .cb-work-footer .btn-glass {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    height: auto !important;
+  }
+  .cb-work-info h3 {
+    order: 4;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 0.8rem;
+  }
+  .cb-work-info p {
+    order: 5;
+    width: 100%;
+  }
+
+  /* Contact Buttons Side-by-Side */
+  .cb-contact-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .cb-contact-actions .btn-glass,
+  .cb-contact-actions .btn {
+    width: auto !important;
+    flex: 0 0 auto;
+  }
+}
+
+/* ABSOLUTE CENTERING SAFEGUARDS */
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.site-wrapper {
+  width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+main, .site-header, .site-footer {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-inline: auto !important;
 }
