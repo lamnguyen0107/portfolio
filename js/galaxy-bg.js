@@ -6,9 +6,7 @@ class GalaxyBG {
         if (!this.container) return;
 
         const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
-        const isCoarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
-        const isMobileViewport = window.matchMedia?.('(max-width: 800px)')?.matches ?? window.innerWidth <= 800;
-        const lowPower = prefersReducedMotion || isCoarsePointer || isMobileViewport;
+        const lowPower = prefersReducedMotion;
 
         this.options = {
             focal: [0.5, 0.5],

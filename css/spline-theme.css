@@ -72,15 +72,4 @@
   overflow: hidden !important;
 }
 
-/* Responsive adjustment for Mobile (Skill Strategy #9.2) */
-@media (max-width: 768px) {
-  #spline-scene-container {
-    opacity: 0.6;
-    /* Dim it for better mobile readability */
-  }
-
-  /* Optional: Hide Spline on mobile if performance is poor */
-  body.hide-spline-mobile #spline-scene-container {
-    display: none;
-  }
-}
+/* Spline is shown at full quality on all devices */
