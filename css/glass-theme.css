@@ -1428,14 +1428,30 @@ p {
     box-shadow: 0 16px 40px rgba(0,0,0,0.6);
   }
   
-  /* About Center Alignment */
-  .cb-about-left h2, .cb-about-roles, .cb-about-right p {
-    text-align: center;
-    justify-content: center;
+  /* About mobile layout reset */
+  .cb-about-grid {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+
+  .cb-about-left,
+  .cb-about-right,
+  .cb-about-left h2,
+  .cb-about-right p {
+    text-align: left;
+  }
+
+  .cb-about-roles {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.35rem;
   }
 
   .cb-about-roles .rotating-text-wrapper {
-    margin-left: 0.3em;
+    margin-left: 0;
+    max-width: 100%;
+    font-size: clamp(1rem, 5.4vw, 1.3rem);
+    height: 1.22em;
   }
   
   /* Works layout: use grid areas to prevent tags/meta/actions from jumping */
@@ -1456,18 +1472,19 @@ p {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      "num tags cta"
+      "num . cta"
       "title title title"
-      "desc desc desc";
+      "desc desc desc"
+      "tags tags tags";
     column-gap: 0.7rem;
-    row-gap: 0.65rem;
-    align-items: center;
+    row-gap: 0.68rem;
+    align-items: start;
   }
 
   .cb-work-num {
     grid-area: num;
     margin: 0 !important;
-    font-size: 1.1rem !important;
+    font-size: 1.18rem !important;
     line-height: 1;
     align-self: start;
   }
@@ -1478,8 +1495,8 @@ p {
     flex-wrap: wrap;
     justify-content: flex-start;
     align-content: flex-start;
-    gap: 0.35rem;
-    margin: 0 !important;
+    gap: 0.38rem;
+    margin: 0.2rem 0 0 !important;
     min-width: 0;
   }
 
@@ -1516,9 +1533,10 @@ p {
 
   .cb-work-info h3 {
     grid-area: title;
-    margin: 0.1rem 0 0.25rem;
+    margin: 0.08rem 0 0.2rem;
     width: 100%;
     font-size: clamp(1.35rem, 6vw, 1.8rem) !important;
+    line-height: 1.22;
   }
 
   .cb-work-info p {
@@ -1526,7 +1544,7 @@ p {
     width: 100%;
     margin: 0;
     font-size: 0.92rem;
-    line-height: 1.65;
+    line-height: 1.6;
   }
 
   /* Contact Buttons Side-by-Side */

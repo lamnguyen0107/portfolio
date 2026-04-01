@@ -10,10 +10,14 @@ class SplineHandler {
             console.error(`Canvas with ID "${canvasId}" not found.`);
             return;
         }
+        // Ensure canvas is visible on every device (especially after prior low-power toggles).
+        this.canvas.style.display = 'block';
+        this.canvas.style.visibility = 'visible';
+        this.canvas.style.opacity = '1';
 
         this.isCoarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
         this.prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
-        this.lowPowerMode = this.isCoarsePointer || this.prefersReducedMotion || window.innerWidth < 768;
+        this.lowPowerMode = this.isCoarsePointer || window.innerWidth < 768;
 
         this.app = new Application(this.canvas);
         this.sceneUrl = sceneUrl;
