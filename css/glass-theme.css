@@ -540,7 +540,7 @@ p {
     width: 200vw;
     max-width: 200vw;
     left: 50%;
-    top: -70vh;
+    top: -60vh;
     bottom: 0;
     transform: translateX(-55%) scale(0.62);
     /* Move up ~5%, right 10%, scale reduced slightly */
@@ -1419,6 +1419,17 @@ p {
 
 /* Mobile Media Query Fixes */
 @media (max-width: 680px) {
+  html,
+  body {
+    overflow-x: hidden !important;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  .capture-frame {
+    overflow-x: clip;
+  }
+
   /* Fix nav drawer blur */
   .nav-drawer, 
   .site-header.glass-panel.menu-open .nav-drawer {
@@ -1486,7 +1497,7 @@ p {
     margin: 0 !important;
     font-size: 1.18rem !important;
     line-height: 1;
-    align-self: start;
+    align-self: center;
   }
 
   .cb-work-tags {
@@ -1513,7 +1524,7 @@ p {
     margin: 0 !important;
     width: auto !important;
     justify-self: end;
-    align-self: start;
+    align-self: center;
     display: flex;
     justify-content: flex-end;
     flex-direction: row;
@@ -1555,6 +1566,17 @@ p {
     justify-content: center;
     gap: 1rem;
     margin-top: 2rem;
+  }
+
+  .cb-contact.reveal {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .cb-contact-inner {
+    display: block;
   }
   .cb-contact-actions .btn-glass,
   .cb-contact-actions .btn {
