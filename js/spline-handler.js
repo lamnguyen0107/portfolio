@@ -11,6 +11,10 @@ class SplineHandler {
             return;
         }
 
+        this.isCoarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
+        this.prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+        this.lowPowerMode = this.isCoarsePointer || this.prefersReducedMotion || window.innerWidth < 768;
+
         this.app = new Application(this.canvas);
         this.sceneUrl = sceneUrl;
         this.init();
@@ -30,14 +34,13 @@ class SplineHandler {
             // Optimize for device resolution
             try {
                 if (this.app.setPixelRatio) {
-                    this.app.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit to 2 for performance
+                    this.updatePixelRatio();
                 }
             } catch (e) {
                 console.warn('Could not set pixel ratio:', e);
             }
 
             // Global scale: Reverted to 1.0 for original proportions
-            const isMobile = window.innerWidth <= 800;
             const baseScale = 1.0;
 
             const allObjects = this.app.getAllObjects();
@@ -65,7 +68,16 @@ class SplineHandler {
 
             // Final resize check
             this.handleResize();
-            window.addEventListener('resize', () => this.handleResize());
+            let resizeRaf = 0;
+            window.addEventListener('resize', () => {
+                if (resizeRaf) return;
+                resizeRaf = requestAnimationFrame(() => {
+                    resizeRaf = 0;
+                    this.lowPowerMode = this.isCoarsePointer || this.prefersReducedMotion || window.innerWidth < 768;
+                    this.updatePixelRatio();
+                    this.handleResize();
+                });
+            });
 
         } catch (error) {
             console.error('Error loading Spline scene:', error);
@@ -117,6 +129,14 @@ class SplineHandler {
 
     handleResize() {
         const isMobile = window.innerWidth < 768;
+    }
+
+    updatePixelRatio() {
+        if (!this.app?.setPixelRatio) return;
+        const dpr = window.devicePixelRatio || 1;
+        // Keep Spline on mobile, but run a lighter render budget.
+        const cap = this.lowPowerMode ? 0.95 : 1.5;
+        this.app.setPixelRatio(Math.min(dpr, cap));
     }
 }
 

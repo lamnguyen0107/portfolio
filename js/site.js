@@ -3,6 +3,9 @@ const isFigmaCapture =
   window.location.hash.includes("figmacapture=") ||
   searchParams.get("figma") === "1" ||
   /figma/i.test(navigator.userAgent);
+const isCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
+const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+const lowPowerMode = isCoarsePointer || prefersReducedMotion;
 
 if (isFigmaCapture) {
   document.body.classList.add("figma-capture");
@@ -12,7 +15,7 @@ if (isFigmaCapture) {
 // Lenis Smooth Scrolling Initialization
 // -------------------------------------------------------------
 let lenis;
-if (!isFigmaCapture && typeof Lenis !== 'undefined') {
+if (!isFigmaCapture && !lowPowerMode && typeof Lenis !== 'undefined') {
   lenis = new Lenis({
     lerp: 0.05,
     wheelMultiplier: 0.8,
@@ -62,6 +65,9 @@ if (yearEl) {
 // -------------------------------------------------------------
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
   const revealItems = document.querySelectorAll(".reveal");
+  const revealToggleActions = lowPowerMode ? "play none none none" : "play reverse play reverse";
+  const revealDuration = lowPowerMode ? 0.75 : 1.2;
+  const revealY = lowPowerMode ? 24 : 40;
 
   revealItems.forEach((item) => {
     // Check if item is already high in the viewport (like Hero)
@@ -71,18 +77,18 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.fromTo(item,
       {
         opacity: isAboveFold ? 1 : 0,
-        y: isAboveFold ? 0 : 40
+        y: isAboveFold ? 0 : revealY
       },
       {
         opacity: 1,
         y: 0,
-        duration: 1.2,
+        duration: revealDuration,
         ease: "expo.out",
         scrollTrigger: {
           trigger: item,
           start: "top 95%",
           end: "bottom 5%", // Added explicit end point for scrolling up
-          toggleActions: "play reverse play reverse",
+          toggleActions: revealToggleActions,
         }
       }
     );
@@ -100,7 +106,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
   revealItems.forEach((item) => revealObserver.observe(item));
 }
 
-const mediaItems = Array.from(document.querySelectorAll(".project-media img"));
+const mediaItems = Array.from(document.querySelectorAll(".project-media img, .cb-work-image-wrap img"));
 let ticking = false;
 
 function attachImageFallback(img) {
@@ -122,6 +128,31 @@ function attachImageFallback(img) {
 
 mediaItems.forEach(attachImageFallback);
 
+function warmupWorkImages() {
+  const workImages = Array.from(document.querySelectorAll(".cb-work-image-wrap img[loading='lazy']"));
+  if (!workImages.length || typeof IntersectionObserver === "undefined") {
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const img = entry.target;
+      // Promote fetch earlier to avoid visible delay when card appears.
+      img.loading = "eager";
+      img.fetchPriority = "high";
+      if (typeof img.decode === "function") {
+        img.decode().catch(() => { });
+      }
+      obs.unobserve(img);
+    });
+  }, { rootMargin: "900px 0px" });
+
+  workImages.forEach((img) => observer.observe(img));
+}
+
+warmupWorkImages();
+
 function applyScrollMotion() {
   const scrollY = window.scrollY || window.pageYOffset || 0;
   document.documentElement.style.setProperty("--ambient-shift", `${Math.min(scrollY * 0.015, 16)}px`);
@@ -141,7 +172,14 @@ if (lenis) {
 } else {
   window.addEventListener("scroll", onScroll, { passive: true });
 }
-window.addEventListener("resize", onScroll);
+let resizeRaf = 0;
+window.addEventListener("resize", () => {
+  if (resizeRaf) return;
+  resizeRaf = requestAnimationFrame(() => {
+    resizeRaf = 0;
+    onScroll();
+  });
+});
 applyScrollMotion();
 
 const siteHeader = document.querySelector(".site-header");

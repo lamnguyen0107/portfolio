@@ -4,7 +4,7 @@
         "title":  "DYM Medical Center Redesign Website",
         "meta":  "Web Redesign | UI/UX",
         "project_url":  "https://dymmedicalcenter.com.vn",
-        "thumbnail_source":  "./projects/dym-medical-center/thumbnail.png",
+      "thumbnail_source":  "./projects/dym-medical-center/thumbnail.jpg",
         "description":  [
                             "Simplified service structure for faster decisions.",
                             "Improved campaign-to-booking conversion flow."
@@ -15,7 +15,7 @@
         "title":  "Quy Nhon Sea Resort Website",
         "meta":  "Web Redesign | UI/UX",
         "project_url":  "https://www.quynhonsearesort.vn/",
-        "thumbnail_source":  "./projects/quy-nhon-sea-resort/thumbnail.png",
+      "thumbnail_source":  "./projects/quy-nhon-sea-resort/thumbnail.jpg",
         "description":  [
                             "Optimized room discovery and booking journey.",
                             "Balanced resort mood with conversion-first layout."
@@ -26,7 +26,7 @@
         "title":  "Friends of Figma HCMC",
         "meta":  "Web Design | Visual UI",
         "project_url":  "https://www.fofhcm.com/",
-        "thumbnail_source":  "./projects/friends-of-figma-hcmc/thumbnail.png",
+      "thumbnail_source":  "./projects/friends-of-figma-hcmc/thumbnail.jpg",
         "description":  [
                             "Built a bold editorial visual direction.",
                             "Kept storytelling pages clear and readable."
@@ -37,7 +37,7 @@
         "title":  "Saigon Metro",
         "meta":  "Mobile App Case Study | UX Study",
         "project_url":  "https://lamnguyens-portfolio.webflow.io/work/saigon-metro",
-        "thumbnail_source":  "./projects/saigon-metro/thumbnail.png",
+      "thumbnail_source":  "./projects/saigon-metro/thumbnail.jpg",
         "description":  [
                             "Mapped commuter pain points end-to-end.",
                             "Proposed clearer route and wayfinding UX."
