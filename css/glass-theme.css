@@ -1168,6 +1168,13 @@ p {
   position: relative;
 }
 
+/* Contact must stay visible even when reveal state desyncs on mobile */
+.cb-contact.reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
 .cb-contact::before {
   content: '';
   position: absolute;

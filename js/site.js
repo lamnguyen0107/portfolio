@@ -70,6 +70,12 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
   const revealY = lowPowerMode ? 24 : 40;
 
   revealItems.forEach((item) => {
+    if (item.id === "contact") {
+      item.classList.add("is-visible");
+      gsap.set(item, { opacity: 1, y: 0, clearProps: "transform" });
+      return;
+    }
+
     // Check if item is already high in the viewport (like Hero)
     const rect = item.getBoundingClientRect();
     const isAboveFold = rect.top < window.innerHeight * 0.5;
