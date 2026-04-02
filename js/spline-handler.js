@@ -23,6 +23,15 @@ class SplineHandler {
             parent.style.opacity = '1';
         }
 
+        // FIX: Relay scroll wheel events to allows page scrolling while over the canvas
+        // This prevents the Spline runtime from intercepting and blocking the page scroll.
+        this.canvas.addEventListener('wheel', (e) => {
+            // By stopping immediate propagation, we prevent Spline's own wheel listener 
+            // from firing and calling preventDefault(), while allowing the event 
+            // to bubble up to the window (and thus Lenis).
+            e.stopImmediatePropagation();
+        }, { capture: true, passive: true });
+
         this.app = new Application(this.canvas);
         this.sceneUrl = sceneUrl;
         this.retryCount = 0;

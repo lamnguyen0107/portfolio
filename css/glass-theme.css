@@ -439,7 +439,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none; /* Disabled to allow scrolling */
+  pointer-events: auto; /* Re-enabled for interaction */
 }
 
 /* Đẩy section kế tiếp (Works) xuống để không che phần hero interaction */
@@ -456,7 +456,8 @@ p {
   height: 100% !important;
   outline: none;
   display: block;
-  pointer-events: none; /* Disabled to allow scrolling */
+  pointer-events: auto; /* Re-enabled for interaction */
+  touch-action: pan-y; /* Allow vertical scroll on touch */
 }
 
 /* Text overlay container */
@@ -556,7 +557,7 @@ p {
     bottom: 0;
     transform: translateX(-55%) scale(0.62);
     /* Move up ~5%, right 10%, scale reduced slightly */
-    pointer-events: none;
+    pointer-events: auto;
   }
 
   .hero-overlay {
