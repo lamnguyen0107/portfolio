@@ -64,9 +64,9 @@ if (yearEl) {
 // -------------------------------------------------------------
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
   const revealItems = document.querySelectorAll(".reveal");
-  const revealToggleActions = lowPowerMode ? "play none none none" : "play reverse play reverse";
-  const revealDuration = lowPowerMode ? 0.75 : 1.2;
-  const revealY = lowPowerMode ? 24 : 40;
+  const revealToggleActions = "play none none none"; // Animate once for best performance and speed
+  const revealDuration = lowPowerMode ? 0.6 : 0.85; // Snappier duration
+  const revealY = lowPowerMode ? 15 : 30; // Subtler movement
 
   revealItems.forEach((item) => {
     if (item.id === "contact") {
@@ -91,8 +91,8 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         ease: "expo.out",
         scrollTrigger: {
           trigger: item,
-          start: "top 95%",
-          end: "bottom 5%", // Added explicit end point for scrolling up
+          start: "top 90%", // Start appearing earlier
+          once: true, // Performance boost
           toggleActions: revealToggleActions,
         }
       }
