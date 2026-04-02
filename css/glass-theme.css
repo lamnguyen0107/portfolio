@@ -439,7 +439,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: auto; /* Active interaction */
+  pointer-events: none; /* Disabled to allow scrolling */
 }
 
 /* Đẩy section kế tiếp (Works) xuống để không che phần hero interaction */
@@ -456,7 +456,7 @@ p {
   height: 100% !important;
   outline: none;
   display: block;
-  pointer-events: auto; /* Active interaction for 3D scene */
+  pointer-events: none; /* Disabled to allow scrolling */
 }
 
 /* Text overlay container */
@@ -556,7 +556,7 @@ p {
     bottom: 0;
     transform: translateX(-55%) scale(0.62);
     /* Move up ~5%, right 10%, scale reduced slightly */
-    pointer-events: auto;
+    pointer-events: none;
   }
 
   .hero-overlay {
