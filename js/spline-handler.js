@@ -10,17 +10,23 @@ class SplineHandler {
             console.error(`Canvas with ID "${canvasId}" not found.`);
             return;
         }
-        // Ensure canvas is visible on every device (especially after prior low-power toggles).
+        // Ensure canvas is visible on every device.
         this.canvas.style.display = 'block';
         this.canvas.style.visibility = 'visible';
         this.canvas.style.opacity = '1';
 
-        this.isCoarsePointer = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
-        this.prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
-        this.lowPowerMode = this.isCoarsePointer || window.innerWidth < 768;
+        // Ensure parent container is also visible
+        const parent = this.canvas.parentElement;
+        if (parent) {
+            parent.style.display = '';
+            parent.style.visibility = 'visible';
+            parent.style.opacity = '1';
+        }
 
         this.app = new Application(this.canvas);
         this.sceneUrl = sceneUrl;
+        this.retryCount = 0;
+        this.maxRetries = 2;
         this.init();
     }
 
@@ -32,42 +38,22 @@ class SplineHandler {
             // Ensure the canvas background is transparent
             this.canvas.style.backgroundColor = 'transparent';
 
+            // Force canvas visible again after load (some browsers reset styles)
+            this.canvas.style.display = 'block';
+            this.canvas.style.visibility = 'visible';
+            this.canvas.style.opacity = '1';
+
             // Hide Spline watermark
             this.hideWatermark();
 
-            // Optimize for device resolution
+            // Set pixel ratio to device native (no capping)
             try {
                 if (this.app.setPixelRatio) {
-                    this.updatePixelRatio();
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                    this.app.setPixelRatio(dpr);
                 }
             } catch (e) {
                 console.warn('Could not set pixel ratio:', e);
-            }
-
-            // Global scale: Reverted to 1.0 for original proportions
-            const baseScale = 1.0;
-
-            const allObjects = this.app.getAllObjects();
-            if (allObjects && allObjects.length > 0) {
-                allObjects.forEach(obj => {
-                    // If it's a visual object (not camera/light/environment)
-                    const isVisual = obj.name && !['Camera', 'Directional Light', 'Environment', 'Point Light', 'Sun', 'Light'].some(n => obj.name.includes(n));
-
-                    if (isVisual && obj.scale) {
-                        obj.scale.x *= baseScale;
-                        obj.scale.y *= baseScale;
-                        obj.scale.z *= baseScale;
-                    }
-
-                    // Keep camera adjustments to ensure full object cluster visibility
-                    // The following was commented out to prevent skewing the new Spline scenes:
-                    // const isCamera = obj.type === 'camera' || (obj.name && obj.name.toLowerCase().includes('camera'));
-                    // if (isCamera && obj.position) {
-                    //     const frustumFactor = isMobile ? 1.55 : 1.25;
-                    //     obj.position.z *= frustumFactor;
-                    //     console.log('Optimized Camera Frustum for:', obj.name);
-                    // }
-                });
             }
 
             // Final resize check
@@ -77,14 +63,18 @@ class SplineHandler {
                 if (resizeRaf) return;
                 resizeRaf = requestAnimationFrame(() => {
                     resizeRaf = 0;
-                    this.lowPowerMode = this.isCoarsePointer || this.prefersReducedMotion || window.innerWidth < 768;
-                    this.updatePixelRatio();
                     this.handleResize();
                 });
             });
 
         } catch (error) {
             console.error('Error loading Spline scene:', error);
+            // Retry loading once
+            if (this.retryCount < this.maxRetries) {
+                this.retryCount++;
+                console.log(`Retrying Spline load (attempt ${this.retryCount}/${this.maxRetries})...`);
+                setTimeout(() => this.init(), 2000);
+            }
         }
     }
 
@@ -132,15 +122,7 @@ class SplineHandler {
     }
 
     handleResize() {
-        const isMobile = window.innerWidth < 768;
-    }
-
-    updatePixelRatio() {
-        if (!this.app?.setPixelRatio) return;
-        const dpr = window.devicePixelRatio || 1;
-        // Keep Spline on mobile, but run a lighter render budget.
-        const cap = this.lowPowerMode ? 0.95 : 1.5;
-        this.app.setPixelRatio(Math.min(dpr, cap));
+        // No-op: CSS handles responsive sizing
     }
 }
 

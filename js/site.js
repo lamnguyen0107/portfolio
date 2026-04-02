@@ -3,9 +3,8 @@ const isFigmaCapture =
   window.location.hash.includes("figmacapture=") ||
   searchParams.get("figma") === "1" ||
   /figma/i.test(navigator.userAgent);
-const isCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
 const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-const lowPowerMode = isCoarsePointer || prefersReducedMotion;
+const lowPowerMode = prefersReducedMotion;
 
 if (isFigmaCapture) {
   document.body.classList.add("figma-capture");

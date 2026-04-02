@@ -445,6 +445,7 @@ p {
   height: 100% !important;
   outline: none;
   display: block;
+  pointer-events: none; /* Restore scrolling over the 3D background */
 }
 
 /* Text overlay container */
